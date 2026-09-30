@@ -448,7 +448,7 @@ private fun BankCard(range: IntRange, current: Int, onPreset: (Int) -> Unit) {
                         .padding(horizontal = 2.dp, vertical = 4.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Box(Modifier.fillMaxWidth().height(3.dp).background(p.color))
+                    Box(Modifier.fillMaxWidth().height(3.dp).background(Color(p.color)))
                     Spacer(Modifier.height(3.dp))
                     Text(
                         p.n.toString(),
