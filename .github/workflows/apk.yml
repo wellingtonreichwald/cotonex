@@ -1,0 +1,52 @@
+name: APK
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - name: Código
+        uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Android SDK (platform 35)
+        shell: bash
+        run: |
+          SDK="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+          MGR="$SDK/cmdline-tools/latest/bin/sdkmanager"
+          [ -x "$MGR" ] || MGR=$(find "$SDK" -name sdkmanager -type f 2>/dev/null | head -1)
+          echo "sdkmanager: $MGR"
+          if [ -n "$MGR" ]; then
+            yes | "$MGR" --licenses >/dev/null 2>&1 || true
+            "$MGR" "platform-tools" "platforms;android-35" "build-tools;35.0.0" \
+              || echo "AVISO: sdkmanager falhou - o AGP instala o platform 35 sozinho"
+          fi
+
+      - name: Gradle 8.11.1
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+
+      - name: Compilar APK
+        run: gradle assembleDebug --stacktrace
+
+      - name: Publicar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: CoToneX-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
