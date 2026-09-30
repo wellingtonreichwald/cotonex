@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- IK Multimedia TONEX One -->
+    <usb-device vendor-id="6547" product-id="209" />
+</resources>
